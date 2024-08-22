@@ -1,22 +1,59 @@
-import Background from "@/assets/login2.png"
-import Victory from "@/assets/victory.svg"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@radix-ui/react-tabs"
-import { Input } from "@/components/ui/input"
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
+import Background from "@/assets/login2.png";
+import Victory from "@/assets/victory.svg";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@radix-ui/react-tabs";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import {apiClient} from "@/lib/api-client";
+import { SIGNUP_ROUTE} from "@/utils/constants";
 
 const Auth = () => {
-  const[email,setEmail]=useState("")
-  const[password,setPassword]=useState("")
-  const[confirmpassword,setConfirmPassword]=useState("")
+  const[email,setEmail]=useState("");
+  const[password,setPassword]=useState("");
+  const[confirmPassword,setConfirmPassword]=useState("");
+  const validateSignup = () =>
+  {
+    if (!email.length)
+    {
+      toast.error("Email is required.");
+      return false;
+    }
+    if (!password.length)
+      {
+        toast.error("Password is required.");
+        return false;
+      }
+      if (!email.length)
+        {
+          toast.error("Email is required.");
+          return false;
+        }
+        if (password!=confirmPassword)
+        {
+          toast.error("Password and confirm password shoulde be same. ")
+          return false;
+        }
+    return true;
+  };
   const handleLogin=async()=>
   {
 
   }
-  const handleSignup=async()=>
-    {
-      
-    }
+  
+    const handleSignup = async () => {
+      if (validateSignup()) {
+        try {
+          const response = await apiClient.post(SIGNUP_ROUTE, { email, password });
+          console.log({ response });
+          // Handle successful signup, like redirecting the user
+        } catch (error) {
+          toast.error("Signup failed. Please try again.");
+          console.error(error);
+        }
+      }
+    };
+    
   return (
     <div className="h-[100vh] w-[100vw] flex items-center
      justify-center">
@@ -75,6 +112,7 @@ const Auth = () => {
             value={email}
             onChange={(e)=>setEmail(e.target.value)}
             />
+            
              <Input 
             placeholder="Password"
             type="password"
@@ -87,18 +125,21 @@ const Auth = () => {
             placeholder="confirm password"
             type="password"
             className="rounded-full p-2"
-            value={confirmpassword}
+            value={confirmPassword}
             onChange={(e)=>setConfirmPassword(e.target.value)}
             />
-             <Button className="rounded-full p-2" onClick={handleSignup}>Sign Up</Button>
+             <Button className="rounded-full p-4" onClick={handleSignup}>Sign Up</Button>
+             
+          
+         
+          
           </TabsContent>
          </Tabs>
 
           </div>
         </div>
         <div className="hidden xl:flex justify-center items-center">
-          <img src={Background} alt="background login" className="h-[700px
-          ]"/>
+          <img src={Background} alt="background login" className="h-[700px]"/>
         </div>
       </div>
     </div>
@@ -106,4 +147,6 @@ const Auth = () => {
   )
 }
 
-export default Auth
+export default Auth;
+
+
